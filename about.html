@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>試行数チャレンジ — 機能紹介</title>
+<meta name="description" content="思いついたら即「最初の一歩」を決めて、成功も失敗も「試行回数」として積み上げる行動力アプリ。準備中ワードの注意、放置タイマー、面倒くさい度ボーナスで先延ばしを防ぎます。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="試行数チャレンジ — 機能紹介">
+<meta property="og:image" content="https://__APP_HOST__/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c1: #e67e22;
+    --c2: #d35400;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #1a1a1a;
+    color: #ececec;
+    line-height: 1.7;
+  }
+  a { color: inherit; text-decoration: none; }
+  .topbar {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 24px 20px 0;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #9a9a9a;
+    transition: color .15s ease;
+  }
+  .back-link:hover { color: #fff; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--c1);
+    margin: 24px 20px 0;
+    border-radius: 24px;
+    padding: 64px 24px;
+    text-align: center;
+  }
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: 0.07;
+    filter: blur(10px);
+  }
+  .hero::before { width: 240px; height: 240px; top: -80px; left: -60px; }
+  .hero::after { width: 300px; height: 300px; bottom: -120px; right: -80px; }
+  .badge {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c1);
+    box-shadow: 0 0 0 14px rgba(255,255,255,0.14);
+  }
+  .category-pill {
+    position: relative;
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    position: relative;
+    margin: 0 0 12px;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 800;
+    color: #fff;
+  }
+  .hero p.tagline {
+    position: relative;
+    margin: 0 auto 32px;
+    max-width: 520px;
+    font-size: 17px;
+    color: rgba(255,255,255,0.88);
+  }
+  .cta {
+    position: relative;
+    display: inline-block;
+    background: #fff;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 36px;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    transition: transform .15s ease;
+  }
+  .cta:hover { transform: translateY(-2px); }
+
+  .features {
+    max-width: 880px;
+    margin: 56px auto 0;
+    padding: 0 20px;
+  }
+  .features h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: #fff;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .feature-card {
+    background: #2a2019;
+    border: 1px solid #3d2e22;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .feature-icon {
+    color: var(--c1);
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .feature-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #fff;
+  }
+  .feature-desc {
+    font-size: 14px;
+    color: #cbbcae;
+    margin: 0;
+  }
+
+  .steps {
+    max-width: 880px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+  }
+  .steps h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 20px;
+    color: #fff;
+  }
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-top: 1px solid #382a1f;
+  }
+  .step:first-of-type { border-top: 0; }
+  .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--c1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step p { margin: 0; font-size: 14px; color: #e0d4c8; }
+  .step strong { color: #fff; }
+
+  .note {
+    max-width: 880px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+    font-size: 13px;
+    color: #a09080;
+  }
+
+  .footer-cta {
+    max-width: 880px;
+    margin: 56px auto 0;
+    padding: 0 20px 64px;
+    text-align: center;
+  }
+  .footer-cta .cta {
+    background: var(--c1);
+    color: #fff;
+    box-shadow: none;
+  }
+  .footer-links {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #a09080;
+  }
+  .footer-links a { color: #9a9a9a; }
+  .footer-links a:hover { color: #fff; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back-link" href="https://apps.yuji-nakamura.com/">← アプリ一覧に戻る</a>
+  </div>
+
+  <section class="hero">
+    <span class="category-pill">学び・成長</span>
+    <div class="badge"><svg width="72" height="72" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 18 V46"/><path d="M27 18 V46"/><path d="M36 18 V46"/><path d="M45 18 V46"/><path d="M12 41 L52 23"/></svg></div>
+    <h1>試行数チャレンジ</h1>
+    <p class="tagline">差がつくのは、才能や綿密な計画より「動いた回数」。思いついたら即「最初の一歩」を決めて、成功も失敗も1回の試行として積み上げるためのアプリです。</p>
+    <a class="cta" href="https://__APP_HOST__">アプリを使ってみる →</a>
+  </section>
+
+  <section class="features">
+    <h2>できること</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 50 L30 34"/><path d="M26 22 L42 38"/><path d="M34 14 L50 30"/><path d="M42 22 L50 14"/><path d="M44 12 H52 V20"/></svg></div>
+        <h3 class="feature-title">「最初の一歩」まで決めてとびつく</h3>
+        <p class="feature-desc">思いついたことを登録するときは「5分でできる最初の一歩」の入力が必須。計画は後回しにして、今すぐ手を動かせる行動まで落とし込みます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8 L56 50 H8 Z"/><path d="M32 24 V36"/><circle cx="32" cy="43" r="2" fill="currentColor" stroke="none"/></svg></div>
+        <h3 class="feature-title">「準備中」ワードに注意</h3>
+        <p class="feature-desc">一歩の中に「準備」「調べる」「検討」「いつか」などの言葉があると、「それ、準備中になっていませんか？」と言い換えを促します。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="36" r="20"/><path d="M32 36 V24"/><path d="M32 36 L40 42"/><path d="M26 8 H38"/><path d="M32 8 V16"/></svg></div>
+        <h3 class="feature-title">放置タイマー</h3>
+        <p class="feature-desc">登録からの経過時間を表示。24時間で黄色、48時間で赤に変わり、先延ばしがひと目でわかります。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 18 V46"/><path d="M27 18 V46"/><path d="M36 18 V46"/><path d="M45 18 V46"/><path d="M12 41 L52 23"/></svg></div>
+        <h3 class="feature-title">成功も失敗も「試行数 +1」</h3>
+        <p class="feature-desc">やってみたら手応え（うまくいった／まあまあ／失敗した）と次の判断（続ける／方向転換／やめる）、学びを1行記録。失敗は「知見」としてカウントされます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 52 V12"/><path d="M12 52 H54"/><rect x="20" y="34" width="7" height="18"/><rect x="32" y="24" width="7" height="28"/><rect x="44" y="30" width="7" height="22"/></svg></div>
+        <h3 class="feature-title">試行数ダッシュボード</h3>
+        <p class="feature-desc">総試行数と称号、今週の試行、連続日数、面倒ポイント、直近8週のグラフ、登録から実行までの平均時間を表示します。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14 H48 V50 H16 Z"/><path d="M24 26 H40"/><path d="M24 34 H40"/><path d="M24 42 H34"/></svg></div>
+        <h3 class="feature-title">「不」ストック</h3>
+        <p class="feature-desc">日常で見つけた不満・不便・不安・不平等をメモ。挑戦のタネとして、ワンタップでとびつきリストに登録できます。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <h2>使い方</h2>
+    <div class="step">
+      <span class="step-num">1</span>
+      <p><strong>Googleでログイン</strong>：記録はあなた専用の領域に保存され、スマホとPCで同じデータを見られます。</p>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <p><strong>思いついたらとびつく</strong>：やってみたいことと「5分でできる最初の一歩」、面倒くさい度を登録します。</p>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <p><strong>すぐやって、結果を記録</strong>：一歩を実行したら「やった！」から手応えと次の判断、学びを記録。これで試行数が1つ増えます。</p>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <p><strong>続けるなら次の一歩へ</strong>：「続ける」「方向転換」を選ぶと、次の一歩の登録フォームにすぐ移れます。合わなければ「やめる」のも立派な1回です。</p>
+    </div>
+  </section>
+
+  <p class="note">※ 面倒ポイントは、面倒くさい度（1〜5）をそのまま加算したものです。面倒なことほどライバルが避けるので、挑戦する価値が高いという考え方にもとづいています。</p>
+
+  <section class="footer-cta">
+    <a class="cta" href="https://__APP_HOST__">今すぐ使ってみる →</a>
+    <p class="footer-links"><a href="https://apps.yuji-nakamura.com/">他のアプリも見る</a></p>
+  </section>
+</body>
+</html>

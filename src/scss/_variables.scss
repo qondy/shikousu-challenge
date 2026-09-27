@@ -1,0 +1,46 @@
+// Colors — キャロット（行動・勢いのオレンジ。OGPサムネイルと統一）
+$color-bg: #faf6f2;
+$color-surface: #ffffff;
+$color-surface-2: #f3ede7;
+$color-surface-3: #e8dfd6;
+$color-primary: #e67e22;
+$color-primary-hover: #d35400;
+$color-primary-ink: #b35309; // 白地の上で文字として使う濃いオレンジ（コントラスト確保）
+$color-danger: #dc2626;
+$color-text: #1d1d1f;
+$color-text-muted: #62666a;
+$color-border: #ebe4dc;
+
+// Status colors（放置タイマー・結果の識別色。primaryには追従させない）
+$color-fresh: #16a085;
+$color-warn: #d4a00a;
+$color-late: #dc2626;
+$color-good: #16a085;
+$color-soso: #7f8c8d;
+$color-fail: #8e44ad;
+
+// Typography
+$font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 15px;
+$font-size-lg: 18px;
+$font-size-xl: 22px;
+$font-size-2xl: 28px;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// Border radius
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+
+// Breakpoints
+$bp-mobile: 480px;
+$bp-tablet: 768px;
