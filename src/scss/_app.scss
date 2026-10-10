@@ -524,3 +524,422 @@
 .app-main {
   padding-bottom: 96px;
 }
+
+// ===== Today =====
+.today {
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $spacing-md;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__date {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: 800;
+  }
+
+  &__progress {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  &__progress-num {
+    font-size: $font-size-2xl;
+    font-weight: 800;
+    color: $color-primary;
+    line-height: 1;
+  }
+
+  &__progress-label {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+  }
+
+  &__bar {
+    height: 8px;
+    border-radius: 999px;
+    background: $color-surface-2;
+    overflow: hidden;
+    margin-bottom: $spacing-md;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    width: 0;
+    background: $color-primary;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  &__empty {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    text-align: center;
+    line-height: 1.7;
+    padding: $spacing-md 0;
+  }
+
+  &__rate {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    line-height: 1.7;
+    margin-top: $spacing-sm;
+
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+.today-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.today-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: 12px $spacing-md;
+  border-radius: $radius-md;
+  background: $color-surface-2;
+  transition: background 0.15s ease, opacity 0.15s ease;
+
+  &.is-overdue {
+    background: #fdecea;
+  }
+
+  &.is-done {
+    opacity: 0.6;
+
+    .today-item__title {
+      text-decoration: line-through;
+    }
+  }
+
+  &__check {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid $color-primary;
+    background: $color-surface;
+    color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+
+    &:hover:not(:disabled) {
+      color: rgba($color-primary, 0.5);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.92);
+    }
+
+    &.is-done {
+      background: $color-primary;
+      color: #fff;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  &__body {
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+
+  &__kind {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-primary-ink;
+  }
+
+  &__overdue {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: #fff;
+    background: $color-late;
+    padding: 0 8px;
+    border-radius: 999px;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 700;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  &__meta {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    line-height: 1.6;
+    margin-top: 2px;
+    word-break: break-word;
+  }
+}
+
+// ===== if-then =====
+fieldset.field {
+  border: 0;
+  padding: 0;
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 0;
+
+  legend {
+    padding: 0;
+  }
+}
+
+.ifthen {
+  &__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: $spacing-sm;
+  }
+
+  input[type='datetime-local'],
+  input[type='text'] {
+    width: 100%;
+    padding: 10px $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-surface;
+    font-size: $font-size-base;
+    color: $color-text;
+
+    &:focus {
+      outline: 2px solid rgba($color-primary, 0.4);
+      border-color: $color-primary;
+    }
+  }
+
+  &__datetime {
+    margin-bottom: $spacing-sm;
+    min-height: 44px;
+  }
+}
+
+.try-card__plan {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: baseline;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  word-break: break-word;
+  margin-bottom: $spacing-sm;
+
+  &.is-overdue {
+    color: $color-late;
+    font-weight: 700;
+  }
+}
+
+.try-card__postponed {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  color: $color-text-muted;
+  background: $color-surface-2;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+
+// ===== Habits =====
+.habit-form {
+  margin-bottom: $spacing-md;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: $spacing-md;
+
+    @media (max-width: $bp-mobile) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  input[type='time'] {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-surface;
+    font-size: $font-size-base;
+    color: $color-text;
+  }
+}
+
+.weekday-picker {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekday {
+  height: 40px;
+  border-radius: $radius-md;
+  background: $color-surface-2;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-text-muted;
+
+  &.is-selected {
+    background: $color-primary;
+    color: #fff;
+  }
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.habit-card {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: 0 2px 12px rgba($color-primary, 0.06);
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 800;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  &__meta {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+
+  &__streak {
+    flex-shrink: 0;
+    text-align: right;
+    line-height: 1.1;
+  }
+
+  &__streak-num {
+    display: block;
+    font-size: $font-size-xl;
+    font-weight: 800;
+    color: $color-primary;
+  }
+
+  &__streak-label {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    font-weight: 600;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+  }
+
+  &__rate {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+    margin-left: auto;
+  }
+}
+
+.habit-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+
+  &__day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: $color-surface-2;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+  }
+
+  .is-done .habit-week__dot {
+    background: $color-primary;
+  }
+
+  .is-miss .habit-week__dot {
+    background: transparent;
+    border: 2px solid rgba($color-late, 0.5);
+  }
+
+  .is-today .habit-week__dot {
+    background: transparent;
+    border: 2px dashed $color-primary;
+  }
+
+  .is-off .habit-week__dot {
+    background: transparent;
+    border: 2px solid $color-surface-2;
+  }
+}
+
+// リンクで作ったボタン（カレンダー登録など）
+a.btn {
+  text-decoration: none;
+}

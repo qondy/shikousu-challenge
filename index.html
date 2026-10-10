@@ -82,6 +82,26 @@
         </div>
       </section>
 
+      <!-- 今日やること -->
+      <section class="section">
+        <div class="today card-surface">
+          <div class="today__head">
+            <div>
+              <p class="today__date" id="today-date"></p>
+              <h2 class="today__title">今日やること</h2>
+            </div>
+            <div class="today__progress">
+              <span class="today__progress-num" id="today-progress">0/0</span>
+              <span class="today__progress-label">完了</span>
+            </div>
+          </div>
+          <div class="today__bar"><div class="today__bar-fill" id="today-bar"></div></div>
+          <ul id="today-list" class="today-list"></ul>
+          <p id="today-empty" class="today__empty hidden">今日の予定はまだありません。<br>とびつきに「いつやるか」を決めるか、「決めたこと」を登録しましょう。</p>
+          <p class="today__rate" id="today-rate"></p>
+        </div>
+      </section>
+
       <!-- とびつく -->
       <section class="section" id="section-add">
         <div class="section__head">
@@ -98,6 +118,12 @@
             <input type="text" id="input-step" maxlength="80" placeholder="例：出店できるイベントに1件問い合わせる" autocomplete="off" />
             <p class="prep-warning hidden" id="prep-warning" role="status"></p>
           </div>
+          <fieldset class="field ifthen">
+            <legend class="field__label">いつ・何をきっかけにやる？<span class="field__hint">「いつ」まで決めると実行率がぐっと上がります</span></legend>
+            <div class="ifthen__presets" id="plan-presets"></div>
+            <input type="datetime-local" id="input-plan-at" class="ifthen__datetime" aria-label="実行予定日時" />
+            <input type="text" id="input-cue" maxlength="40" placeholder="きっかけ（例：昼ごはんを食べ終わったら）" autocomplete="off" aria-label="きっかけ" />
+          </fieldset>
           <div class="field">
             <span class="field__label">面倒くさい度<span class="field__hint">面倒なほどライバルが少ない＝ポイント高め</span></span>
             <div class="hassle-picker" id="hassle-picker" role="radiogroup" aria-label="面倒くさい度"></div>
@@ -110,10 +136,40 @@
       <section class="section">
         <div class="section__head">
           <h2 class="section__title">とびつきリスト <span class="count-badge" id="waiting-count">0</span></h2>
-          <p class="section__desc">登録から24時間で黄色、48時間で赤に変わります。やったら結果を記録しましょう。</p>
+          <p class="section__desc">予定時刻を過ぎると赤に変わります（予定なしは登録から24時間で黄色、48時間で赤）。やったら結果を記録しましょう。</p>
         </div>
         <div id="waiting-list" class="try-list"></div>
         <div id="waiting-empty" class="empty-state card-surface hidden">まだ何もありません。<br>思いついたことに、とびつきましょう。</div>
+      </section>
+
+      <!-- 決めたこと -->
+      <section class="section" id="section-habits">
+        <div class="section__head">
+          <h2 class="section__title">決めたこと</h2>
+          <p class="section__desc">続けると決めた行動を、曜日・時刻・きっかけまで決めて登録。今日の分は「今日やること」に並びます。</p>
+        </div>
+        <form id="habit-form" class="card-surface habit-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="input-habit-title">決めたこと</label>
+            <input type="text" id="input-habit-title" maxlength="40" placeholder="例：ブログを1本更新する" autocomplete="off" />
+          </div>
+          <div class="field">
+            <span class="field__label">やる曜日</span>
+            <div class="weekday-picker" id="habit-days" role="group" aria-label="やる曜日"></div>
+          </div>
+          <div class="habit-form__row">
+            <div class="field">
+              <label class="field__label" for="input-habit-time">時刻<span class="field__hint">任意</span></label>
+              <input type="time" id="input-habit-time" />
+            </div>
+            <div class="field habit-form__cue">
+              <label class="field__label" for="input-habit-cue">きっかけ<span class="field__hint">任意</span></label>
+              <input type="text" id="input-habit-cue" maxlength="40" placeholder="例：朝コーヒーを淹れたら" autocomplete="off" />
+            </div>
+          </div>
+          <button type="submit" id="btn-habit-submit" class="btn btn--primary btn--block">決めたことに追加</button>
+        </form>
+        <div id="habit-list" class="habit-list"></div>
       </section>
 
       <!-- 「不」ストック -->
@@ -156,6 +212,24 @@
     </footer>
 
     <button id="feedback-btn" class="feedback-btn"><svg width="22" height="22" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-6px"><rect x="8" y="14" width="48" height="30" rx="8"/><path d="M22 44 L14 54 V44"/></svg> ご意見・ご要望</button>
+  </div>
+
+  <!-- if-thenプランの設定 -->
+  <div id="plan-modal-overlay" class="dialog-overlay">
+    <div class="modal">
+      <div class="modal__head">
+        <div class="modal__title">いつやる？</div>
+        <button id="btn-plan-close" class="modal__close" aria-label="閉じる">&times;</button>
+      </div>
+      <p class="result-target" id="plan-target"></p>
+      <fieldset class="field ifthen">
+        <legend class="field__label">実行予定</legend>
+        <div class="ifthen__presets" id="plan-modal-presets"></div>
+        <input type="datetime-local" id="input-plan-modal-at" class="ifthen__datetime" aria-label="実行予定日時" />
+        <input type="text" id="input-plan-modal-cue" maxlength="40" placeholder="きっかけ（例：昼ごはんを食べ終わったら）" autocomplete="off" aria-label="きっかけ" />
+      </fieldset>
+      <button type="button" id="btn-plan-save" class="btn btn--primary btn--block btn--lg">この予定で決める</button>
+    </div>
   </div>
 
   <!-- やってみた結果の記録 -->
