@@ -17,6 +17,9 @@ import {
   DAILY_WORDS, DECISION_LABELS, FEEL_LABELS, FU_KINDS, HASSLE_LABELS, findPrepWord,
 } from './words';
 import { Decision, Feel, Fu, FuKind, Habit, Try } from './types';
+import { initClickTracking } from './analytics';
+
+initClickTracking();
 
 // ============================================================
 // DOM refs
