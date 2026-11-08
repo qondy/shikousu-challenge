@@ -199,17 +199,23 @@
         <p class="fu-converted" id="fu-converted"></p>
       </section>
 
-      <!-- やってみた記録 -->
-      <section class="section">
+      <!-- 挑戦の歩み -->
+      <section class="section" id="section-history">
         <div class="section__head">
-          <h2 class="section__title">やってみた記録</h2>
-          <p class="section__desc">うまくいっても失敗しても、すべて1回の試行です。</p>
+          <h2 class="section__title">挑戦の歩み</h2>
+          <p class="section__desc">今までに挑戦したことの一覧です。うまくいっても失敗しても、すべて1回の試行。はじめの頃の自分と、いまの自分を比べてみましょう。</p>
+        </div>
+        <div id="growth" class="growth card-surface hidden"></div>
+        <div class="history-tools">
+          <input type="search" id="input-history-search" class="history-tools__search" maxlength="40" placeholder="キーワードで探す" autocomplete="off" aria-label="挑戦をキーワードで探す" />
+          <button type="button" id="btn-history-sort" class="btn btn--ghost btn--sm history-tools__sort" data-sort="desc">新しい順</button>
         </div>
         <div class="tabs" id="history-tabs" role="tablist">
           <button type="button" class="tabs__btn is-active" data-filter="all">すべて</button>
           <button type="button" class="tabs__btn" data-filter="fail">失敗から学んだ</button>
           <button type="button" class="tabs__btn" data-filter="continue">続けている</button>
         </div>
+        <p id="history-count" class="history-count"></p>
         <div id="history-list" class="try-list"></div>
         <div id="history-empty" class="empty-state card-surface hidden">まだ記録がありません。</div>
         <button type="button" id="btn-history-more" class="btn btn--ghost btn--block hidden">もっと見る</button>

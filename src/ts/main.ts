@@ -12,7 +12,7 @@ import {
   PLAN_PRESETS, presetToMs, toLocalInput, fromLocalInput, planLabel, onPlanRate,
   WEEK_LABELS, isScheduled, daysLabel, habitStats, tryCalendarUrl, habitCalendarUrl,
 } from './plan';
-import { calcStats } from './stats';
+import { calcStats, calcGrowth, hoursLabel, GrowthSide } from './stats';
 import {
   DAILY_WORDS, DECISION_LABELS, FEEL_LABELS, FU_KINDS, HASSLE_LABELS, findPrepWord,
 } from './words';
@@ -86,6 +86,10 @@ const historyTabs = $('history-tabs');
 const historyList = $('history-list');
 const historyEmpty = $('history-empty');
 const btnHistoryMore = $<HTMLButtonElement>('btn-history-more');
+const growthEl = $('growth');
+const inputHistorySearch = $<HTMLInputElement>('input-history-search');
+const btnHistorySort = $<HTMLButtonElement>('btn-history-sort');
+const historyCount = $('history-count');
 
 const planOverlay = $('plan-modal-overlay');
 const planTarget = $('plan-target');
@@ -137,6 +141,8 @@ interface State {
   /** 「不」ストックからとびついた場合、その「不」のID（登録成功時に変換済みにする） */
   fromFuId: string | null;
   historyFilter: HistoryFilter;
+  historySort: 'desc' | 'asc';
+  historyQuery: string;
   historyLimit: number;
   resultTryId: string | null;
   feel: Feel | null;
@@ -161,6 +167,8 @@ const state: State = {
   fuKind: 'fuman',
   fromFuId: null,
   historyFilter: 'all',
+  historySort: 'desc',
+  historyQuery: '',
   historyLimit: HISTORY_PAGE,
   resultTryId: null,
   feel: null,
@@ -243,7 +251,7 @@ function renderDashboard(): void {
     statSpeed.textContent = '登録してから実行するまでの平均時間がここに表示されます。';
   } else {
     const h = s.avgHoursToStart;
-    const label = h < 1 ? `${Math.max(1, Math.round(h * 60))}分` : h < 48 ? `${Math.round(h)}時間` : `${Math.round(h / 24)}日`;
+    const label = hoursLabel(h);
     statSpeed.textContent = `登録→実行までの平均：${label}${h < 24 ? '　その調子！' : '　もっと早く動けるはず'}`;
   }
 }
@@ -558,34 +566,130 @@ function renderFus(): void {
   }));
 }
 
+function growthRow(label: string, early: string, recent: string, better: boolean | null): HTMLElement {
+  const row = document.createElement('div');
+  row.className = 'growth__row';
+  const now = textEl('span', 'growth__val growth__val--now', recent);
+  if (better) now.append(textEl('span', 'growth__up', '成長'));
+  row.append(textEl('span', 'growth__label', label), textEl('span', 'growth__val', early), now);
+  return row;
+}
+
+function renderGrowth(): void {
+  const g = calcGrowth(state.tries, Date.now());
+  growthEl.classList.toggle('hidden', !g);
+  if (!g) {
+    growthEl.replaceChildren();
+    return;
+  }
+  const { early: e, recent: r } = g;
+  const range = (side: GrowthSide): string => (side.from === side.to ? `#${side.from}` : `#${side.from}〜#${side.to}`);
+
+  const head = document.createElement('div');
+  head.className = 'growth__head';
+  head.append(
+    textEl('h3', 'growth__title', 'はじめの頃 vs いま'),
+    textEl('p', 'growth__summary', `はじめてから${g.days}日・挑戦${g.total}回`),
+  );
+
+  const firsts = document.createElement('div');
+  firsts.className = 'growth__firsts';
+  const pick = (label: string, t: GrowthSide['first'], num: number): HTMLElement => {
+    const box = document.createElement('div');
+    box.className = 'growth__pick';
+    box.append(
+      textEl('span', 'growth__pick-label', `${label}（#${num}・${labelOf(t.doneAt ?? t.createdAt)}）`),
+      textEl('p', 'growth__pick-title', t.title),
+    );
+    return box;
+  };
+  firsts.append(pick('最初の挑戦', e.first, 1), pick('最新の挑戦', r.last, g.total));
+
+  const table = document.createElement('div');
+  table.className = 'growth__table';
+  const cols = document.createElement('div');
+  cols.className = 'growth__row growth__row--head';
+  cols.append(textEl('span', 'growth__label', ''), textEl('span', 'growth__val', `はじめの頃\n${range(e)}`), textEl('span', 'growth__val growth__val--now', `いま\n${range(r)}`));
+  const fix1 = (n: number): string => (Math.round(n * 10) / 10).toFixed(1);
+  table.append(
+    cols,
+    growthRow('1週間あたりの挑戦', `${fix1(e.pace)}回`, `${fix1(r.pace)}回`, r.pace > e.pace + 0.05),
+    growthRow('平均の面倒くさい度', fix1(e.avgHassle), fix1(r.avgHassle), r.avgHassle > e.avgHassle + 0.05),
+    growthRow('登録→実行までの時間', hoursLabel(e.avgHours), hoursLabel(r.avgHours), r.avgHours < e.avgHours * 0.9),
+    growthRow('学びを残した割合', `${e.learnRate}%`, `${r.learnRate}%`, r.learnRate > e.learnRate),
+  );
+
+  const notes: HTMLElement[] = [];
+  if (g.total < 6) notes.push(textEl('p', 'growth__note', '挑戦が増えるほど、はじめの頃との違いがはっきり見えてきます。'));
+  growthEl.replaceChildren(head, firsts, table, ...notes);
+}
+
 function renderHistory(): void {
   historyTabs.querySelectorAll<HTMLButtonElement>('.tabs__btn').forEach((b) => {
     b.classList.toggle('is-active', b.dataset.filter === state.historyFilter);
   });
-  const done = state.tries
+  btnHistorySort.textContent = state.historySort === 'desc' ? '新しい順' : '古い順';
+  btnHistorySort.dataset.sort = state.historySort;
+
+  // 通し番号は絞り込みに関係なく「何回目の挑戦か」で固定する
+  const chrono = state.tries
     .filter((t) => t.doneAt !== null)
+    .sort((a, b) => (a.doneAt ?? 0) - (b.doneAt ?? 0));
+  const numberOf = new Map(chrono.map((t, i) => [t.id, i + 1]));
+
+  const q = state.historyQuery.trim().toLowerCase();
+  const done = chrono
     .filter((t) => (state.historyFilter === 'fail' ? t.feel === 'fail'
       : state.historyFilter === 'continue' ? t.decision === 'continue' : true))
-    .sort((a, b) => (b.doneAt ?? 0) - (a.doneAt ?? 0));
+    .filter((t) => !q || [t.title, t.firstStep, t.learning].some((v) => v.toLowerCase().includes(q)));
+  if (state.historySort === 'desc') done.reverse();
 
   historyEmpty.classList.toggle('hidden', done.length > 0);
+  historyEmpty.textContent = chrono.length && !done.length ? '条件に合う挑戦が見つかりません。' : 'まだ記録がありません。';
+  historyCount.textContent = chrono.length ? `${done.length}件${done.length !== chrono.length ? `（全${chrono.length}件中）` : ''}` : '';
   btnHistoryMore.classList.toggle('hidden', done.length <= state.historyLimit);
 
-  historyList.replaceChildren(...done.slice(0, state.historyLimit).map((t) => {
+  const monthKeyOf = (t: Try): string => {
+    const d = new Date(t.doneAt ?? t.createdAt);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月`;
+  };
+  const monthCounts = new Map<string, number>();
+  done.forEach((t) => monthCounts.set(monthKeyOf(t), (monthCounts.get(monthKeyOf(t)) ?? 0) + 1));
+
+  const nodes: HTMLElement[] = [];
+  let lastMonth = '';
+  done.slice(0, state.historyLimit).forEach((t) => {
+    const month = monthKeyOf(t);
+    if (month !== lastMonth) {
+      lastMonth = month;
+      const h = document.createElement('h3');
+      h.className = 'history-month';
+      h.append(textEl('span', '', month), textEl('span', 'history-month__count', `${monthCounts.get(month) ?? 0}回`));
+      nodes.push(h);
+    }
+
+    const num = numberOf.get(t.id) ?? 0;
     const card = document.createElement('article');
-    card.className = 'try-card is-done';
+    card.className = `try-card is-done${num === 1 ? ' is-first' : ''}`;
 
     const head = document.createElement('div');
     head.className = 'try-card__head';
-    head.append(textEl('h3', 'try-card__title', t.title), hassleDots(t.hassle));
+    head.append(textEl('h4', 'try-card__title', t.title), hassleDots(t.hassle));
 
     const badges = document.createElement('div');
     badges.className = 'try-card__badges';
+    badges.append(textEl('span', 'try-card__num', num === 1 ? '#1 最初の挑戦' : `#${num}`));
     badges.append(textEl('span', 'try-card__date', labelOf(t.doneAt ?? t.createdAt)));
     if (t.feel) badges.append(textEl('span', `badge badge--${t.feel}`, FEEL_LABELS[t.feel]));
     if (t.decision) badges.append(textEl('span', `badge badge--${t.decision}`, DECISION_LABELS[t.decision]));
 
     card.append(head, badges);
+    if (t.firstStep) {
+      const step = document.createElement('p');
+      step.className = 'try-card__step';
+      step.append(textEl('span', 'try-card__step-label', '一歩'), textEl('span', '', t.firstStep));
+      card.append(step);
+    }
     if (t.learning) {
       const learn = document.createElement('p');
       learn.className = 'try-card__learning';
@@ -604,8 +708,9 @@ function renderHistory(): void {
       askConfirm('この記録を削除しますか？（試行数も1減ります）', () => deleteTry(uid, t.id));
     }));
     card.append(actions);
-    return card;
-  }));
+    nodes.push(card);
+  });
+  historyList.replaceChildren(...nodes);
 }
 
 function renderResultChoices(): void {
@@ -622,6 +727,7 @@ function renderAll(): void {
   renderWaiting();
   renderHabits();
   renderFus();
+  renderGrowth();
   renderHistory();
   renderResultChoices();
   btnTrySubmit.disabled = state.pending.has('try:create');
@@ -917,6 +1023,18 @@ historyTabs.addEventListener('click', (e) => {
   const filter = btn?.dataset.filter;
   if (filter !== 'all' && filter !== 'fail' && filter !== 'continue') return;
   state.historyFilter = filter;
+  state.historyLimit = HISTORY_PAGE;
+  renderHistory();
+});
+
+btnHistorySort.addEventListener('click', () => {
+  state.historySort = state.historySort === 'desc' ? 'asc' : 'desc';
+  state.historyLimit = HISTORY_PAGE;
+  renderHistory();
+});
+
+inputHistorySearch.addEventListener('input', () => {
+  state.historyQuery = inputHistorySearch.value;
   state.historyLimit = HISTORY_PAGE;
   renderHistory();
 });

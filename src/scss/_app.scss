@@ -943,3 +943,197 @@ fieldset.field {
 a.btn {
   text-decoration: none;
 }
+
+// ===== 挑戦の歩み =====
+.growth {
+  margin-bottom: $spacing-lg;
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-xs $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 800;
+  }
+
+  &__summary {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-primary-ink;
+  }
+
+  &__firsts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    @media (max-width: $bp-mobile) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__pick {
+    background: $color-surface-2;
+    border-radius: $radius-md;
+    padding: $spacing-sm $spacing-md;
+
+    &:last-child {
+      background: rgba($color-primary, 0.1);
+    }
+  }
+
+  &__pick-label {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+  }
+
+  &__pick-title {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-top: 2px;
+    word-break: break-word;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: 10px 0;
+    border-top: 1px solid $color-border;
+
+    &--head {
+      border-top: 0;
+      padding-top: 0;
+
+      .growth__val {
+        font-size: $font-size-xs;
+        font-weight: 700;
+        color: $color-text-muted;
+        white-space: pre-line;
+        line-height: 1.4;
+      }
+
+      .growth__val--now {
+        color: $color-primary-ink;
+      }
+    }
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+    line-height: 1.4;
+  }
+
+  &__val {
+    font-size: $font-size-base;
+    font-weight: 800;
+    text-align: center;
+
+    &--now {
+      color: $color-primary-ink;
+    }
+  }
+
+  &__up {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: #fff;
+    background: $color-primary;
+    padding: 0 6px;
+    border-radius: 999px;
+    vertical-align: 2px;
+  }
+
+  &__note {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    margin-top: $spacing-sm;
+    line-height: 1.6;
+  }
+}
+
+.history-tools {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  &__search {
+    flex: 1;
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px $spacing-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-surface;
+    font-size: $font-size-base;
+    color: $color-text;
+
+    &:focus {
+      outline: 2px solid rgba($color-primary, 0.4);
+      border-color: $color-primary;
+    }
+  }
+
+  &__sort {
+    flex-shrink: 0;
+    min-height: 40px;
+  }
+}
+
+.history-count {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  text-align: right;
+  margin-bottom: $spacing-sm;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.history-month {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: 800;
+  margin-top: $spacing-sm;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &__count {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: $color-text-muted;
+  }
+}
+
+.try-card__num {
+  font-size: $font-size-xs;
+  font-weight: 800;
+  color: $color-primary-ink;
+}
+
+.try-card.is-first {
+  background: rgba($color-primary, 0.05);
+}
+
+h4.try-card__title {
+  margin: 0;
+}
